@@ -1,0 +1,29 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+# Version figée : sinon Forge prend la plus récente, et solc >= 0.8.36 refuse
+# evm_version "amsterdam" (expérimental). 0.8.30 est la version des contrats déployés.
+solc = "0.8.30"
+# Sepolia est passé au hard fork Amsterdam (coût en gas de la création d'état réévalué).
+# Sans ce réglage, Forge simule avec les coûts d'Osaka, sous-estime le gas -> OutOfGas.
+evm_version = "amsterdam"
+# Optimiseur : divise par ~2 la taille du bytecode, donc le gas de déploiement.
+# Indispensable sous Amsterdam, sinon le déploiement dépasse la limite de 16,7M gas par transaction.
+optimizer = true
+optimizer_runs = 200
+# Pipeline IR (Yul) : optimisation globale du contrat, ~-17% de bytecode.
+# Nécessaire depuis l'ex6 pour rester sous la limite de 16,7M gas par transaction.
+via_ir = true
+
+# Les fichiers fournis par le TD ne sont pas reformatés.
+[fmt]
+ignore = ["src/td/**"]
+
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+
+[etherscan]
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
